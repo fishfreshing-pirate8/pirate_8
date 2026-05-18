@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>海賊八號 - 陽光海洋觀光娛樂船</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Microsoft JhengHei", Arial, sans-serif; }
+        body { background-color: #f0f8ff; color: #222; }
+        header { background: linear-gradient(135deg, #0077b6, #0096c7); color: white; padding: 18px 20px; position: sticky; top: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); }
+        .logo { font-size: 26px; font-weight: 900; color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
+        .nav-links a { color: white; text-decoration: none; margin-left: 25px; font-size: 16px; font-weight: bold; }
+        .hero { background: linear-gradient(rgba(0, 119, 182, 0.4), rgba(2, 62, 138, 0.5)), url('https://unsplash.com') no-repeat center center/cover; height: 350px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center; padding: 20px; }
+        .hero h1 { font-size: 46px; font-weight: bold; margin-bottom: 20px; text-shadow: 2px 3px 6px rgba(0,0,0,0.5); }
+        .section { max-width: 1000px; margin: 40px auto; padding: 35px; background: white; border-radius: 16px; box-shadow: 0 6px 15px rgba(0, 119, 182, 0.08); }
+        .section-title { font-size: 30px; color: #03045e; margin-bottom: 25px; position: relative; padding-bottom: 12px; font-weight: bold; }
+        .section-title::after { content: ''; position: absolute; left: 0; bottom: 0; width: 80px; height: 5px; background: linear-gradient(90deg, #ffb703, #fb8500); border-radius: 3px; }
+        .schedule-box { background-color: #fffbc8; border: 2px dashed #fb8500; border-radius: 12px; padding: 20px; }
+        .schedule-header { font-size: 20px; color: #d47a00; font-weight: bold; margin-bottom: 15px; }
+        .table-container { width: 100%; overflow-x: auto; border-radius: 8px; }
+        .schedule-table { width: 100%; border-collapse: collapse; background: white; min-width: 600px; }
+        .schedule-table th, .schedule-table td { padding: 12px 15px; text-align: center; border-bottom: 1px solid #eee; }
+        .schedule-table th { background-color: #fb8500; color: white; }
+        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 14px; font-weight: bold; }
+        .status-open { background-color: #e8f5e9; color: #2e7d32; }
+        .status-full { background-color: #ffebee; color: #c62828; }
+        .btn-book-now { background-color: #0096c7; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .btn-book-now:disabled { background-color: #ccc; cursor: not-allowed; }
+        #booking.section { background: linear-gradient(180deg, #ffffff, #e1f5fe); }
+        .booking-form { display: flex; flex-direction: column; gap: 20px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .form-group label { font-weight: bold; color: #023e8a; }
+        .form-group input { padding: 12px; border: 2px solid #bde0fe; border-radius: 8px; font-size: 16px; background-color: white; }
+        
+        .selected-info-banner { background-color: #e2eafc; border-left: 6px solid #0077b6; padding: 15px; border-radius: 8px; font-size: 18px; line-height: 1.6; color: #023e8a; margin-bottom: 10px; font-weight: bold; }
+        
+        .submit-btn { background: linear-gradient(90deg, #ffb703, #fb8500); color: white; padding: 15px; border: none; border-radius: 8px; font-size: 20px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        footer { background-color: #023e8a; color: white; text-align: center; padding: 30px 20px; margin-top: 60px; }
+        .float-buttons { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 15px; z-index: 999; }
+        .btn-float { width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; text-decoration: none; font-weight: bold; box-shadow: 0 6px 12px rgba(0,0,0,0.25); }
+        .btn-line { background-color: #06C755; }
+        .btn-phone { background-color: #ffb703; color: #023e8a; }
+        .loading-text { text-align: center; padding: 20px; font-weight: bold; color: #666; }
+        @media (max-width: 768px) { header { flex-direction: column; gap: 15px; } .form-row { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">🏴‍☠️ 海賊八號</div>
+        <nav class="nav-links">
+            <a href="#schedule-section">最新船期</a>
+            <a href="#booking">線上報名</a>
+        </nav>
+    </header>
+
+    <div class="hero">
+        <h1>奔向大海！開啟您的盛夏冒險</h1>
+    </div>
+
+    <div id="schedule-section" class="section">
+        <div class="schedule-box">
+            <div class="schedule-header">📅 近期出船日程公告（請點擊下方按鈕進行登記）</div>
+            <div class="table-container">
+                <div id="loading" class="loading-text">正在從雲端同步最新船期...</div>
+                <table class="schedule-table" id="schedule-table" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>出船日期</th>
+                            <th>行程班別</th>
+                            <th>滿班人數</th>
+                            <th>剩餘位數</th>
+                            <th>目前狀態</th>
+                            <th>線上預約</th>
+                        </tr>
+                    </thead>
+                    <tbody id="schedule-body">
+                        <!-- 資料由 JavaScript 自動生成 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="booking" class="section">
+        <h2 class="section-title">立即預約下一趟冒險</h2>
+        
+        <div class="selected-info-banner">
+            📌 您目前選取的船期資訊：<br>
+            📅 出海日期：<span id="display-date" style="color: #fb8500; font-size: 20px;">-- 請先選取上方日程表 --</span><br>
+            🚢 出海行程：<span id="display-trip" style="color: #fb8500; font-size: 20px;">-- 請先選取上方日程表 --</span>
+        </div>
+
+        <form class="booking-form" id="reg-form" onsubmit="handleFormSubmit(event)">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="name">聯絡人姓名 *</label>
+                    <input type="text" id="name" required placeholder="請輸入您的真實姓名">
+                </div>
+                <div class="form-group">
+                    <label for="phone">聯絡電話 *</label>
+                    <input type="tel" id="phone" required placeholder="請輸入手機號碼">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="attendees">預約人數 *</label>
+                    <input type="number" id="attendees" required min="1" max="20" placeholder="請輸入人數">
+                </div>
+                <div class="form-group" style="display: none;">
+                    <input type="text" id="hidden-date">
+                    <input type="text" id="hidden-trip">
+                </div>
+            </div>
+            
+            <button type="submit" class="submit-btn" id="submit-btn" disabled style="background: #ccc; cursor: not-allowed;">請先選取上方出船日期</button>
+        </form>
+    </div>
+
+    <footer>
+        <p>© 2026 海賊八號 觀光娛樂船 版權所有</p>
+    </footer>
+
+    <div class="float-buttons">
+        <a href="https://line.me" target="_blank" class="btn-float btn-line">LINE</a>
+        <a href="tel:0908008999" class="btn-float btn-phone">電話</a>
+    </div>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbyjgQIhzVXLc69kT1iTZrEjJ3LMPTnnf0f6xo62nLHESoxTJBPnkLgHSOlTxLjLfmF39g/exec";
+
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchSchedule();
+        });
+
+        function fetchSchedule() {
+            fetch(API_URL)
+                .then(res => res.json())
+                .then(data => {
+                    const tbody = document.getElementById('schedule-body');
+                    tbody.innerHTML = '';
+                    data.forEach(item => {
+                        const isFull = item.status === '已額滿' || item.available === 0;
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td><b>${item.date}</b></td>
+                            <td>${item.emoji} ${item.trip}</td>
+                            <td>${item.maxSeats} 人</td>
+                            <td><span style="color: ${item.available <= 3 ? 'red' : 'green'}; font-weight: bold;">${item.available} 位</span></td>
+                            <td><span class="status-badge ${isFull ? 'status-full' : 'status-open'}">${item.status}</span></td>
+                            <td><button class="btn-book-now" ${isFull ? 'disabled' : ''} onclick="selectSchedule('${item.date}', '${item.trip}')">${isFull ? '客滿' : '點我報名'}</button></td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('schedule-table').style.display = 'table';
+                }).catch(err => {
+                    document.getElementById('loading').innerText = '暫時無法同步雲端課表，請聯絡客服。';
+                });
+        }
+
+        function selectSchedule(dateString, tripValue) {
+            document.getElementById('display-date').innerText = dateString;
+            document.getElementById('display-trip').innerText = tripValue;
+            document.getElementById('hidden-date').value = dateString;
+            document.getElementById('hidden-trip').value = tripValue;
+            
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = false;
+            submitBtn.style.background = "linear-gradient(90deg, #ffb703, #fb8500)";
+            submitBtn.style.cursor = "pointer";
+            submitBtn.innerText = "🌊 確認送出並發送通知";
+
+            document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            btn.innerText = '正在核對雲端即時座位...';
+            btn.disabled = true;
+
+            const payload = {
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value,
+                date: document.getElementById('hidden-date').value, 
+                attendees: document.getElementById('attendees').value,
+                trip: document.getElementById('hidden-trip').value 
+            };
+
+            fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(result => {
+                if (result.status === 'overbooked') {
+                    alert(`❌ 預約失敗（人數超額）\n\n抱歉！您選擇的日期目前僅剩【 ${result.available} 個空位 】。\n但您填寫了【 ${payload.attendees} 人 】，已超出上限。\n\n系統將自動重新整理網頁，請重新選擇人數！`);
+                    window.location.reload();
+                } 
+                else if (result.status === 'success') {
+                    alert(`揚帆出發！預約成功！\n\n感謝 ${payload.name} 的報名！\n海賊八號已收到您的預約申請。\n\n網頁即將重新整理以更新最新賸餘座位！`);
+                    window.location.reload();
+                } else {
+                    alert('系統連線有誤，頁面將自動重整，請再試一次。');
+                    window.location.reload();
+                }
+            })
+            .catch(err => {
+                alert('發送失敗，請確認網路連線或後台設定。');
+                window.location.reload();
+            });
+        }
+    </script>
+</body>
+</html>
